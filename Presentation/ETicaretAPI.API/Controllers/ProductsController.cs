@@ -24,7 +24,15 @@ namespace ETicaretAPI.API.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            return Ok(_productReadRepository.GetAll(false));
+            return Ok(_productReadRepository.GetAll(false).Select(p => new
+            {
+                p.Id,
+                p.Name,
+                p.Stock,
+                p.Price,
+                p.CreatedDate,
+                p.UpdatedDate
+            }));
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(string id)
@@ -36,10 +44,6 @@ namespace ETicaretAPI.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(VM_Create_Product model)
         {
-            if (ModelState.IsValid)
-            {
-
-            }
             await _productWriteRepository.AddAsync(new()
             {
                 Name = model.Name,
