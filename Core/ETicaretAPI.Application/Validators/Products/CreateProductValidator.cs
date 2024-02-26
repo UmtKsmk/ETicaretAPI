@@ -12,8 +12,8 @@ namespace ETicaretAPI.Application.Validators.Products
                 .NotNull()
                     .WithMessage("Please do not leave the product name blank.")
                 .MaximumLength(150)
-                .MinimumLength(1)
-                    .WithMessage("Please enter the product name between 1 and 150 characters.");
+                .MinimumLength(2)
+                    .WithMessage("Please enter the product name between 2 and 150 characters.");
 
             RuleFor(p => p.Stock)
                 .NotEmpty()

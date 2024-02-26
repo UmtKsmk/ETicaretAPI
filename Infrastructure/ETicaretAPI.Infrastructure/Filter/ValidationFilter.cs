@@ -15,6 +15,7 @@ namespace ETicaretAPI.Infrastructure.Filter
                     .ToArray();
 
                 context.Result = new BadRequestObjectResult(errors);
+                return;
             }
 
             await next();
