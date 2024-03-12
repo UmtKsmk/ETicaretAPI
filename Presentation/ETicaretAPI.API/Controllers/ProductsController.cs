@@ -83,15 +83,23 @@ namespace ETicaretAPI.API.Controllers
             return Ok();
         }
         [HttpPost("[action]")]
-        public async Task<IActionResult> Upload()
+        public async Task<IActionResult> Upload([FromForm] IFormFileCollection files)
         {
             //wwwroot/resource/product-images
             string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "resource/product-images");
 
-            Random r = new();
-            foreach (IFormFile file in Request.Form.Files)
+            if (!Directory.Exists(uploadPath))
             {
-                string fullPath = Path.Combine(uploadPath, $"{r.NextDouble()}{Path.GetExtension(file.FileName)}");
+                Directory.CreateDirectory(uploadPath);
+            }
+
+            files = Request.Form.Files;
+
+            Random r = new();
+
+            foreach (IFormFile file in files)
+            {
+                string fullPath = Path.Combine(uploadPath, $"{r.Next()}{Path.GetExtension(file.FileName)}");
 
                 using FileStream fileStream = new(fullPath, FileMode.Create, FileAccess.Write, FileShare.None, 1024 * 1024, useAsync: false);
                 await file.CopyToAsync(fileStream);
