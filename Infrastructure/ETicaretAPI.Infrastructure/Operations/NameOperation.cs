@@ -1,0 +1,57 @@
+﻿namespace ETicaretAPI.Infrastructure.Operations
+{
+    public static class NameOperation
+    {
+        public static string CharacterRegulatory(string name)
+            => name
+                .Replace("\"", "")
+                .Replace("!", "")
+                .Replace("'", "")
+                .Replace("^", "")
+                .Replace("+", "")
+                .Replace("%", "")
+                .Replace("½", "")
+                .Replace("&", "")
+                .Replace("/", "")
+                .Replace("{", "")
+                .Replace("}", "")
+                .Replace("(", "")
+                .Replace(")", "")
+                .Replace("[", "")
+                .Replace("]", "")
+                .Replace("=", "")
+                .Replace("?", "")
+                .Replace("_", "")
+                .Replace("|", "")
+                .Replace("@", "")
+                .Replace("€", "")
+                .Replace("~", "")
+                .Replace(":", "")
+                .Replace(";", "")
+                .Replace(".", "-")
+                .Replace("æ", "")
+                .Replace("ß", "")
+                .Replace("é", "")
+                .Replace("¨", "")
+                .Replace("Ö", "o")
+                .Replace("ö", "o")
+                .Replace("Ü", "u")
+                .Replace("ü", "u")
+                .Replace("İ", "ı")
+                .Replace("i", "ı")
+                .Replace("Ğ", "g")
+                .Replace("ğ", "g")
+                .Replace("Ç", "c")
+                .Replace("ç", "c")
+                .Replace("Ş", "s")
+                .Replace("ş", "s")
+                .Replace("â", "a")
+                .Replace("î", "i")
+                .Replace("Â", "a")
+                .Replace("Î", "i")
+                .Replace("<", "")
+                .Replace(">", "");
+
+
+    }
+}
