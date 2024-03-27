@@ -26,14 +26,15 @@ namespace ETicaretAPI.Infrastructure.Services.Storage.Local
 
         // Has File
         public bool HasFile(string path, string fileName)
-            => File.Exists($"{path}\\{fileName}");
+            => File.Exists($"wwwroot\\{path}\\{fileName}");
+
 
         // Copy File
-        async Task<bool> CopyFileAsync(string filePath, IFormFile file)
+        async Task<bool> CopyFileAsync(string path, IFormFile file)
         {
             try
             {
-                await using FileStream fileStream = new(filePath, FileMode.Create, FileAccess.Write, FileShare.None, 1024 * 1024, useAsync: false);
+                await using FileStream fileStream = new(path, FileMode.Create, FileAccess.Write, FileShare.None, 1024 * 1024, useAsync: false);
 
                 await file.CopyToAsync(fileStream);
                 await fileStream.FlushAsync();
