@@ -56,7 +56,6 @@ namespace ETicaretAPI.Infrastructure.Services.Storage
                     }
                 }
 
-                //if (File.Exists($"{filePath}\\{newFileName}"))
                 if (hasFileMethod(pathOrContainerName, newFileName))
                 {
                     return await FileRenameAsync(pathOrContainerName, newFileName, hasFileMethod, false);
