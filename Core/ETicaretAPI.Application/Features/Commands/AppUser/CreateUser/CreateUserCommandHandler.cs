@@ -19,7 +19,7 @@ namespace ETicaretAPI.Application.Features.Commands.AppUser.CreateUser
             {
                 Id = Guid.NewGuid().ToString(),
                 NameSurname = request.NameSurname,
-                UserName = request.UserName,
+                UserName = request.Username,
                 Email = request.Email,
             }, request.Password);
 
