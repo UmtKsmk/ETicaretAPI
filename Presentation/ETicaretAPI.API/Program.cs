@@ -7,6 +7,10 @@ using ETicaretAPI.Persistence;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
+using Serilog.Core;
+using Serilog.Sinks.PostgreSQL;
+using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,8 +21,25 @@ builder.Services.AddPersistenceServices();
 builder.Services.AddApplicationServices();
 
 builder.Services.AddStorage<AzureStorage>();
-//builder.Services.AddStorage<AzureStorage>();
-//builder.Services.AddStorage(ETicaretAPI.Infrastructure.Enums.StorageType.Azure);
+
+Logger log = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("logs/log.txt")
+    .WriteTo.PostgreSQL(builder.Configuration.GetConnectionString("PostgreSQL"), "logs",
+    needAutoCreateTable: true,
+    columnOptions: new Dictionary<string, ColumnWriterBase>
+    {
+        {"message", new RenderedMessageColumnWriter()},
+        {"message_template", new MessageTemplateColumnWriter()},
+        {"level", new LevelColumnWriter()},
+        {"time_stamp", new TimestampColumnWriter()},
+        {"exception", new ExceptionColumnWriter()},
+        {"log_event", new LogEventSerializedColumnWriter()},
+        {"user_name", }
+    })
+    .CreateLogger();
+
+builder.Host.UseSerilog(log);
 
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
     policy.WithOrigins("http://localhost:4200", "https://localhost:4200").AllowAnyMethod().AllowAnyHeader()
@@ -45,7 +66,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         ValidAudience = builder.Configuration["Token:Audience"],
         ValidIssuer = builder.Configuration["Token:Issuer"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Token:SecurityKey"])),
-        LifetimeValidator = (notBefore, expires, securityToken, validationParameters) => expires != null ? expires > DateTime.UtcNow : false
+        LifetimeValidator = (notBefore, expires, securityToken, validationParameters) => expires != null ? expires > DateTime.UtcNow : false,
+
+        NameClaimType = ClaimTypes.Name, //JWT üzerinde Name claimne karþýlýk gelen deðeri User.Identity.Name propertysinden elde edebiliriz.
     };
 });
 
