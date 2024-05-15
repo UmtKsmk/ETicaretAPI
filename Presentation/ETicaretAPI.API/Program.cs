@@ -6,6 +6,7 @@ using ETicaretAPI.Infrastructure;
 using ETicaretAPI.Infrastructure.Filter;
 using ETicaretAPI.Infrastructure.Services.Storage.Azure;
 using ETicaretAPI.Persistence;
+using ETicaretAPI.SignalR;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpLogging;
@@ -23,6 +24,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddInfrastructureServices();
 builder.Services.AddPersistenceServices();
 builder.Services.AddApplicationServices();
+builder.Services.AddSingalRServices();
 
 builder.Services.AddStorage<AzureStorage>();
 
@@ -59,7 +61,7 @@ builder.Services.AddHttpLogging(logging =>
 });
 
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
-    policy.WithOrigins("http://localhost:4200", "https://localhost:4200").AllowAnyMethod().AllowAnyHeader()
+    policy.WithOrigins("http://localhost:4200", "https://localhost:4200").AllowAnyMethod().AllowAnyHeader().AllowCredentials()
 ));
 
 builder.Services.AddControllers(options => options.Filters.Add<ValidationFilter>())
@@ -119,5 +121,6 @@ app.Use(async (context, next) =>
 });
 
 app.MapControllers();
+app.MapHubs();
 
 app.Run();
