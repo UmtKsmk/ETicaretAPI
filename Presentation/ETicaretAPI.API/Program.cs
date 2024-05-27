@@ -21,6 +21,7 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddHttpContextAccessor(); //Client ' tan gelen request neticvesinde oluþturulan HttpContext nesnesine katmanlardaki class 'Lar üzerinden(busineess Logic) eriþebilmemizi saðlayan bir servistir.
 builder.Services.AddInfrastructureServices();
 builder.Services.AddPersistenceServices();
 builder.Services.AddApplicationServices();
