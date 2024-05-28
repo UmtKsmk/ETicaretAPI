@@ -68,9 +68,11 @@ namespace ETicaretAPI.Persistence.Services
                 }
 
                 await _basketWriteRepository.SaveAsync();
+                return targetBasket;
             }
 
             throw new Exception("An unexpected error has occurred!");
+
         }
 
         public async Task AddedItemToBasketAsync(VM_Create_BasketItem basketItem)

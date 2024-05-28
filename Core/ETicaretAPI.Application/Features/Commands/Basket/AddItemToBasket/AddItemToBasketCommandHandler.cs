@@ -3,16 +3,16 @@ using MediatR;
 
 namespace ETicaretAPI.Application.Features.Commands.Basket.AddedItemToBasket
 {
-    internal class AddedItemToBasketCommandHandler : IRequestHandler<AddedItemToBasketCommandRequest, AddedItemToBasketCommandResponse>
+    public class AddItemToBasketCommandHandler : IRequestHandler<AddItemToBasketCommandRequest, AddItemToBasketCommandResponse>
     {
         readonly IBasketService _basketService;
 
-        public AddedItemToBasketCommandHandler(IBasketService basketService)
+        public AddItemToBasketCommandHandler(IBasketService basketService)
         {
             _basketService = basketService;
         }
 
-        public async Task<AddedItemToBasketCommandResponse> Handle(AddedItemToBasketCommandRequest request, CancellationToken cancellationToken)
+        public async Task<AddItemToBasketCommandResponse> Handle(AddItemToBasketCommandRequest request, CancellationToken cancellationToken)
         {
             await _basketService.AddedItemToBasketAsync(new()
             {
