@@ -7,11 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\ETicaretAPI.Application\ETicaretAPI.Application.csproj" />
+    <Compile Remove="Services\Storage\AWS\**" />
+    <EmbeddedResource Remove="Services\Storage\AWS\**" />
+    <None Remove="Services\Storage\AWS\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services\Storage\AWS\" />
+    <ProjectReference Include="..\..\Core\ETicaretAPI.Application\ETicaretAPI.Application.csproj" />
   </ItemGroup>
 
   <ItemGroup>
