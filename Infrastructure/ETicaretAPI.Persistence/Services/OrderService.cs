@@ -20,6 +20,7 @@ namespace ETicaretAPI.Persistence.Services
                 Address = createOrder.Address,
                 Id = Guid.Parse(createOrder.BasketId),
                 Description = createOrder.Description,
+                OrderCode = (new Random().NextDouble() * 100000000).ToString(),
             });
 
             await _orderWriteRepository.SaveAsync();
