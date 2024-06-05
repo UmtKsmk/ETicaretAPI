@@ -23,17 +23,17 @@ namespace ETicaretAPI.Application.Features.Commands.ProductImageFile.ChangeShowC
                     p
                 });
 
-            var data = await query.FirstOrDefaultAsync(p => p.p.Id == Guid.Parse(request.ProductId) && p.pif.Showcase);
+            var data = await query.FirstOrDefaultAsync(p => p.p.Id == Guid.Parse(request.ProductId) && p.pif.ShowCase);
 
             if (data != null)
             {
-                data.pif.Showcase = false;
+                data.pif.ShowCase = false;
             }
 
             var image = await query.FirstOrDefaultAsync(p => p.pif.Id == Guid.Parse(request.ImageId));
             if (image != null)
             {
-                image.pif.Showcase = true;
+                image.pif.ShowCase = true;
             }
 
             await _productImageFileWriteRepository.SaveAsync();
