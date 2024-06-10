@@ -38,10 +38,10 @@ namespace ETicaretAPI.Persistence.Services
         public async Task<ListOrder> GetAllOrdersAsync(int page, int size)
         {
             var query = _orderReadRepository.Table.Include(o => o.Basket)
-                      .ThenInclude(b => b.User)
-                      .Include(o => o.Basket)
-                         .ThenInclude(b => b.BasketItems)
-                         .ThenInclude(bi => bi.Product);
+                    .ThenInclude(b => b.User)
+                        .Include(o => o.Basket)
+                            .ThenInclude(b => b.BasketItems)
+                                .ThenInclude(bi => bi.Product);
 
             var data = query.Skip(page * size).Take(size);
 
@@ -50,11 +50,36 @@ namespace ETicaretAPI.Persistence.Services
                 TotalOrderCount = await query.CountAsync(),
                 Orders = await data.Select(o => new
                 {
+                    Id = o.Id,
                     CreateDate = o.CreateDate,
                     OrderCode = o.OrderCode,
-                    UserName = o.Basket.User.UserName
+                    UserName = o.Basket.User.UserName,
                     TotalPrice = o.Basket.BasketItems.Sum(bi => bi.Product.Price * bi.Quantity),
                 }).ToListAsync()
+            };
+        }
+
+        public async Task<SingleOrder> GetOrderByIdAsync(string id)
+        {
+            var data = await _orderReadRepository.Table
+                                .Include(o => o.Basket)
+                                    .ThenInclude(b => b.BasketItems)
+                                        .ThenInclude(bi => bi.Product)
+                                            .FirstOrDefaultAsync(o => o.Id == Guid.Parse(id));
+
+            return new()
+            {
+                Id = data.Id.ToString(),
+                OrderCode = data.OrderCode,
+                Description = data.Description,
+                Address = data.Address,
+                BasketItems = data.Basket.BasketItems.Select(bi => new
+                {
+                    bi.Product.Name,
+                    bi.Product.Price,
+                    bi.Quantity,
+                }),
+                CreateDate = data.CreateDate,
             };
         }
     }
