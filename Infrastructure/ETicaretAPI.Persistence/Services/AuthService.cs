@@ -132,5 +132,18 @@ namespace ETicaretAPI.Persistence.Services
                 await _mailService.SendPasswordResetMailAsync(email, user.Id, resetToken);
             }
         }
+
+        public async Task<bool> VerifyResetTokenAsync(string resetToken, string userId)
+        {
+            AppUser user = await _userManager.FindByIdAsync(userId);
+            if (user != null)
+            {
+                byte[] tokenBytes = WebEncoders.Base64UrlDecode(resetToken);
+                resetToken = Encoding.UTF8.GetString(tokenBytes);
+
+                return await _userManager.VerifyUserTokenAsync(user, _userManager.Options.Tokens.PasswordResetTokenProvider, "ResetToken", resetToken);
+            }
+            return false;
+        }
     }
 }
