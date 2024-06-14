@@ -9,14 +9,17 @@ namespace ETicaretAPI.Persistence.Services
     {
         readonly IOrderWriteRepository _orderWriteRepository;
         readonly IOrderReadRepository _orderReadRepository;
+        readonly ICompletedOrderWriteRepository _completedOrderWriteRepository;
 
         public OrderService(
             IOrderWriteRepository orderWriteRepository,
-            IOrderReadRepository orderReadRepository
+            IOrderReadRepository orderReadRepository,
+            ICompletedOrderWriteRepository completedOrderWriteRepository
             )
         {
             _orderWriteRepository = orderWriteRepository;
             _orderReadRepository = orderReadRepository;
+            _completedOrderWriteRepository = completedOrderWriteRepository;
         }
 
         public async Task CreateOrderAsync(CreateOrder createOrder)
@@ -81,6 +84,11 @@ namespace ETicaretAPI.Persistence.Services
                 }),
                 CreateDate = data.CreateDate,
             };
+        }
+
+        public Task CompleteOrderAsync(string id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

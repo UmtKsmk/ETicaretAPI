@@ -24,7 +24,6 @@ namespace ETicaretAPI.Application.Features.Commands.AppUser.CreateUser
                 PasswordConfirm = request.PasswordConfirm,
             });
 
-
             return new()
             {
                 Message = response.Message,
