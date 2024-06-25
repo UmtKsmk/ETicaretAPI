@@ -55,9 +55,16 @@ namespace ETicaretAPI.Infrastructure.Services
             mail.AppendLine(userId);
             mail.AppendLine("/");
             mail.AppendLine(resetToken);
-            mail.AppendLine("\">here</a>...</strong><br><br>Thanks,<br>Mini|E-Ticaret");
+            mail.AppendLine("\">here</a>...</strong><br><br>Thanks,<br><b>Mini|E-Ticaret</b>");
 
             await SendMailAsync(to, "Password Reset Request", mail.ToString());
+        }
+
+        public async Task SendCompletedOrderMailAsync(string to, string userName, string orderCode, DateTime orderDate)
+        {
+            string mail = $"Hello Mr/Ms <b>{userName}</b>,<br><br> Your order with the code <b>{orderCode}</b>, which you purchased on <b>{orderDate}</b>, has been packed and given to the cargo company.<br><br>Thanks,<br><b>Mini|E-Ticaret</b>";
+
+            await SendMailAsync(to, $"Your Order with Order Number {orderCode} is Completed", mail);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using ETicaretAPI.Application.Abstractions.Services;
 using ETicaretAPI.Application.DTOs.Order;
 using ETicaretAPI.Application.Repositories;
+using ETicaretAPI.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace ETicaretAPI.Persistence.Services
@@ -10,16 +11,19 @@ namespace ETicaretAPI.Persistence.Services
         readonly IOrderWriteRepository _orderWriteRepository;
         readonly IOrderReadRepository _orderReadRepository;
         readonly ICompletedOrderWriteRepository _completedOrderWriteRepository;
+        readonly ICompletedOrderReadRepository _completedOrderReadRepository;
 
         public OrderService(
             IOrderWriteRepository orderWriteRepository,
             IOrderReadRepository orderReadRepository,
-            ICompletedOrderWriteRepository completedOrderWriteRepository
+            ICompletedOrderWriteRepository completedOrderWriteRepository,
+            ICompletedOrderReadRepository completedOrderReadRepository
             )
         {
             _orderWriteRepository = orderWriteRepository;
             _orderReadRepository = orderReadRepository;
             _completedOrderWriteRepository = completedOrderWriteRepository;
+            _completedOrderReadRepository = completedOrderReadRepository;
         }
 
         public async Task CreateOrderAsync(CreateOrder createOrder)
@@ -48,47 +52,92 @@ namespace ETicaretAPI.Persistence.Services
 
             var data = query.Skip(page * size).Take(size);
 
+            var data2 = from order in data
+                        join completedOrder in _completedOrderReadRepository.Table
+                        on order.Id equals completedOrder.OrderId into co
+                        from _co in co.DefaultIfEmpty()
+                        select new
+                        {
+                            Id = order.Id,
+                            OrderCode = order.OrderCode,
+                            Basket = order.Basket,
+                            CreateDate = order.CreateDate,
+                            Completed = _co != null ? true : false,
+                        };
+
             return new()
             {
                 TotalOrderCount = await query.CountAsync(),
-                Orders = await data.Select(o => new
+                Orders = await data2.Select(o => new
                 {
                     Id = o.Id,
-                    CreateDate = o.CreateDate,
-                    OrderCode = o.OrderCode,
                     UserName = o.Basket.User.UserName,
+                    OrderCode = o.OrderCode,
+                    CreateDate = o.CreateDate,
                     TotalPrice = o.Basket.BasketItems.Sum(bi => bi.Product.Price * bi.Quantity),
+                    o.Completed,
                 }).ToListAsync()
             };
         }
 
         public async Task<SingleOrder> GetOrderByIdAsync(string id)
         {
-            var data = await _orderReadRepository.Table
-                                .Include(o => o.Basket)
-                                    .ThenInclude(b => b.BasketItems)
-                                        .ThenInclude(bi => bi.Product)
-                                            .FirstOrDefaultAsync(o => o.Id == Guid.Parse(id));
+            var data = _orderReadRepository.Table
+                                 .Include(o => o.Basket)
+                                     .ThenInclude(b => b.BasketItems)
+                                         .ThenInclude(bi => bi.Product);
+
+            var data2 = await (from order in data
+                               join completedOrder in _completedOrderReadRepository.Table
+                                    on order.Id equals completedOrder.OrderId into co
+                               from _co in co.DefaultIfEmpty()
+                               select new
+                               {
+                                   Id = order.Id,
+                                   OrderCode = order.OrderCode,
+                                   Address = order.Address,
+                                   Description = order.Description,
+                                   Basket = order.Basket,
+                                   CreatedDate = order.CreateDate,
+                                   Completed = _co != null ? true : false,
+                               }).FirstOrDefaultAsync(o => o.Id == Guid.Parse(id));
 
             return new()
             {
-                Id = data.Id.ToString(),
-                OrderCode = data.OrderCode,
-                Description = data.Description,
-                Address = data.Address,
-                BasketItems = data.Basket.BasketItems.Select(bi => new
+                Id = data2.Id.ToString(),
+                OrderCode = data2.OrderCode,
+                Address = data2.Address,
+                Description = data2.Description,
+                BasketItems = data2.Basket.BasketItems.Select(bi => new
                 {
                     bi.Product.Name,
                     bi.Product.Price,
-                    bi.Quantity,
+                    bi.Quantity
                 }),
-                CreateDate = data.CreateDate,
+                CreateDate = data2.CreatedDate,
+                Completed = data2.Completed
             };
         }
 
-        public Task CompleteOrderAsync(string id)
+        public async Task<(bool, CompletedOrderDTO)> CompleteOrderAsync(string id)
         {
-            throw new NotImplementedException();
+            Order? order = await _orderReadRepository.Table
+                    .Include(o => o.Basket)
+                        .ThenInclude(b => b.User)
+                            .FirstOrDefaultAsync(o => o.Id == Guid.Parse(id));
+
+            if (order != null)
+            {
+                await _completedOrderWriteRepository.AddAsync(new() { OrderId = Guid.Parse(id) });
+                return (await _completedOrderWriteRepository.SaveAsync() > 0, new()
+                {
+                    Username = order.Basket.User.UserName,
+                    EMail = order.Basket.User.Email,
+                    OrderCode = order.OrderCode,
+                    OrderDate = order.CreateDate,
+                });
+            }
+            return (false, null);
         }
     }
 }
