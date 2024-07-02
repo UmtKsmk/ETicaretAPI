@@ -1,4 +1,5 @@
-﻿using ETicaretAPI.Application.Abstractions.Services;
+﻿using ETicaretAPI.Application.Abstractions;
+using ETicaretAPI.Application.Abstractions.Services;
 using ETicaretAPI.Application.Abstractions.Services.Authentications;
 using ETicaretAPI.Application.Repositories;
 using ETicaretAPI.Domain.Entities.Identity;
@@ -49,6 +50,7 @@ namespace ETicaretAPI.Persistence
             services.AddScoped<IExternalAuthentication, AuthService>();
             services.AddScoped<IInternalAuthentication, AuthService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IBasketService, BasketService>();
             services.AddScoped<IOrderService, OrderService>();
