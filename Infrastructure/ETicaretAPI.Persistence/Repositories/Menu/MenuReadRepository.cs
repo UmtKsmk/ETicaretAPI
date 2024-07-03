@@ -4,9 +4,9 @@ using ETicaretAPI.Persistence.Contexts;
 
 namespace ETicaretAPI.Persistence.Repositories
 {
-    public class CustomerReadRepository : ReadRepository<Customer>, ICustomerReadRepository
+    public class MenuReadRepository : ReadRepository<Menu>, IMenuReadRepository
     {
-        public CustomerReadRepository(ETicaretAPIDbContext context) : base(context)
+        public MenuReadRepository(ETicaretAPIDbContext context) : base(context)
         {
         }
     }

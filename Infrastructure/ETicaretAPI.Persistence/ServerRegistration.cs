@@ -42,10 +42,14 @@ namespace ETicaretAPI.Persistence
             services.AddScoped<IInvoiceFileWriteRepository, InvoiceFileWriteRepository>();
             services.AddScoped<IBasketReadRepository, BasketReadRepository>();
             services.AddScoped<IBasketWriteRepository, BasketWriteRepository>();
-            services.AddScoped<IBasketItemWriteRepository, BasketItemWriteRepository>();
             services.AddScoped<IBasketItemReadRepository, BasketItemReadRepository>();
+            services.AddScoped<IBasketItemWriteRepository, BasketItemWriteRepository>();
             services.AddScoped<ICompletedOrderReadRepository, CompletedOrderReadRepository>();
             services.AddScoped<ICompletedOrderWriteRepository, CompletedOrderWriteRepository>();
+            services.AddScoped<IMenuReadRepository, MenuReadRepository>();
+            services.AddScoped<IMenuWriteRepository, MenuWriteRepository>();
+            services.AddScoped<IEndpointReadRepository, EndpointReadRepository>();
+            services.AddScoped<IEndpointWriteRepository, EndpointWriteRepository>();
 
             services.AddScoped<IExternalAuthentication, AuthService>();
             services.AddScoped<IInternalAuthentication, AuthService>();
@@ -54,6 +58,7 @@ namespace ETicaretAPI.Persistence
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IBasketService, BasketService>();
             services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IAuthorizationEndpointService, AuthorizationEndpointService>();
         }
     }
 }
