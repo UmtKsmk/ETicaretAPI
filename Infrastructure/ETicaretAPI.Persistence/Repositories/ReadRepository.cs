@@ -2,12 +2,7 @@
 using ETicaretAPI.Domain.Entities.Common;
 using ETicaretAPI.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ETicaretAPI.Persistence.Repositories
 {
@@ -24,7 +19,7 @@ namespace ETicaretAPI.Persistence.Repositories
         public IQueryable<T> GetAll(bool tracking = true)
         {
             var query = Table.AsQueryable();
-            if(!tracking)
+            if (!tracking)
                 query = query.AsNoTracking();
             return query;
         }
@@ -32,15 +27,15 @@ namespace ETicaretAPI.Persistence.Repositories
         public IQueryable<T> GetWhere(Expression<Func<T, bool>> method, bool tracking = true)
         {
             var query = Table.Where(method);
-            if(!tracking) 
-                query = query.AsNoTracking(); 
+            if (!tracking)
+                query = query.AsNoTracking();
             return query;
         }
 
         public async Task<T> GetSingleAsync(Expression<Func<T, bool>> method, bool tracking = true)
         {
             var query = Table.AsQueryable();
-            if(!tracking)
+            if (!tracking)
                 query = query.AsNoTracking();
             return await Table.FirstOrDefaultAsync(method);
         }
