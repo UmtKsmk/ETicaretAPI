@@ -4,6 +4,7 @@ using ETicaretAPI.Application.Exceptions;
 using ETicaretAPI.Application.Helpers;
 using ETicaretAPI.Domain.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace ETicaretAPI.Persistence.Services
 {
@@ -73,5 +74,43 @@ namespace ETicaretAPI.Persistence.Services
             }
         }
 
+        public async Task<List<ListUser>> GetAllUsersAsync(int page, int size)
+        {
+            var users = await _userManager.Users.Skip(page * size).Take(size).ToListAsync();
+
+            return users.Select(user => new ListUser
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                NameSurname = user.NameSurname,
+                Email = user.Email,
+                TwoFactorEnabled = user.TwoFactorEnabled,
+            }).ToList();
+        }
+
+        public async Task AssignRoleToUserAsync(string userId, string[] roles)
+        {
+            AppUser user = await _userManager.FindByIdAsync(userId);
+            if (user != null)
+            {
+                var appRoles = await _userManager.GetRolesAsync(user);
+                await _userManager.RemoveFromRolesAsync(user, roles);
+
+                await _userManager.AddToRolesAsync(user, appRoles);
+            }
+        }
+
+        public async Task<string[]> GetRolesToUser(string userId)
+        {
+            AppUser user = await _userManager.FindByIdAsync(userId);
+            if (user != null)
+            {
+                var userRoles = await _userManager.GetRolesAsync(user);
+                return userRoles.ToArray();
+            }
+            return new string[] { };
+        }
+
+        public int TotalUsersCount => _userManager.Users.Count();
     }
 }

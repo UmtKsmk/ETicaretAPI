@@ -96,7 +96,7 @@ namespace ETicaretAPI.Persistence.Services
             if (result.Succeeded)
             {
                 Token token = _tokenHandler.CreateAccessToken(accessTokenLifeTime, user);
-                await _userService.UpdateRefreshTokenAsync(token.RefreshToken, user, token.Expiration, 300);
+                await _userService.UpdateRefreshTokenAsync(token.RefreshToken, user, token.Expiration, 600);
                 return token;
             }
             throw new AuthenticationErrorException();
@@ -107,8 +107,8 @@ namespace ETicaretAPI.Persistence.Services
             AppUser? user = await _userManager.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
             if (user != null && user?.RefreshTokenEndDate > DateTime.UtcNow)
             {
-                Token token = _tokenHandler.CreateAccessToken(900, user);
-                await _userService.UpdateRefreshTokenAsync(token.RefreshToken, user, token.Expiration, 300);
+                Token token = _tokenHandler.CreateAccessToken(2700, user);
+                await _userService.UpdateRefreshTokenAsync(token.RefreshToken, user, token.Expiration, 600);
                 return token;
             }
             else
@@ -124,8 +124,6 @@ namespace ETicaretAPI.Persistence.Services
             {
                 string resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-                //byte[] tokenBytes = Encoding.UTF8.GetBytes(resetToken);
-                //resetToken = WebEncoders.Base64UrlEncode(tokenBytes);
                 resetToken = resetToken.UrlEncode();
 
 
@@ -138,8 +136,6 @@ namespace ETicaretAPI.Persistence.Services
             AppUser user = await _userManager.FindByIdAsync(userId);
             if (user != null)
             {
-                //byte[] tokenBytes = WebEncoders.Base64UrlDecode(resetToken);
-                //resetToken = Encoding.UTF8.GetString(tokenBytes);
                 resetToken = resetToken.UrlDecode();
 
 
