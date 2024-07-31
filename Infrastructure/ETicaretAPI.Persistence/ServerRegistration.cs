@@ -14,6 +14,7 @@ namespace ETicaretAPI.Persistence
 {
     public static class ServerRegistration
     {
+
         public static void AddPersistenceServices(this IServiceCollection services)
         {
             services.AddIdentity<AppUser, AppRole>(options =>

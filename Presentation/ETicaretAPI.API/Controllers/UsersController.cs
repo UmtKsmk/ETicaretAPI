@@ -40,7 +40,7 @@ namespace ETicaretAPI.API.Controllers
 
         [HttpGet("get-roles-to-user/{UserId}")]
         [Authorize(AuthenticationSchemes = "Admin")]
-        [AuthorizeDefinition(Menu = "Users", ActionType = ActionType.Reading, Definition = "Get All Users")]
+        [AuthorizeDefinition(Menu = "Users", ActionType = ActionType.Reading, Definition = "Get Roles To User")]
         public async Task<IActionResult> GetRolesToUser([FromRoute] GetRolesToUserQueryRequest getRolesToUserQueryRequest)
         {
             GetRolesToUserQueryResponse response = await _mediator.Send(getRolesToUserQueryRequest);
